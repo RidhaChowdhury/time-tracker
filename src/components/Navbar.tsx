@@ -54,12 +54,7 @@ export default function Navbar({ onOpen, ...rest }: NavbarProps) {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://static.vecteezy.com/system/resources/previews/004/835/442/original/boxing-gloves-cartoon-icon-illustration-vector.jpg"
-                  }
-                />
+                <Avatar size={"sm"} name="You" />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
