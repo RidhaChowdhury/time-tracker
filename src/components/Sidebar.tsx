@@ -15,12 +15,8 @@ import {
 import { useHookstate } from "@hookstate/core";
 import React from "react";
 import store from "../store";
+import Goal from "../types/Goal";
 import Navbar from "./Navbar";
-
-interface Goal {
-  id: string;
-  name: string;
-}
 
 export default function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,13 +45,13 @@ export default function Sidebar() {
   );
 }
 
-interface SidebarProps extends BoxProps {
+interface SidebarContentProps extends BoxProps {
   onClose: () => void;
 }
 
-const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const [goals, setGoals] = React.useState([]);
-  const [goalId, setGoalId] = React.useState("");
+const SidebarContent = ({ onClose, ...rest }: SidebarContentProps) => {
+  const [goals, setGoals] = React.useState<Array<Goal>>([]);
+  const [goalId, setGoalId] = React.useState<string>("");
 
   const globalState = useHookstate(store);
 
