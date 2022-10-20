@@ -21,10 +21,24 @@ import Navbar from "./Navbar";
 export default function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [goals, setGoals] = React.useState<Array<Goal>>([]);
+  const [selectedGoal, setSelectedGoal] = React.useState<string>("");
+
+  const globalState = useHookstate(store);
+
+  React.useEffect(() => {
+    if (globalState.get().goals) {
+      setGoals(globalState.get().goals);
+    }
+  }, [globalState]);
+
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
+        goals={goals}
+        selectedGoal={selectedGoal}
+        setSelectedGoal={setSelectedGoal}
         display={{ base: "none", md: "block" }}
       />
       <Drawer
@@ -37,30 +51,37 @@ export default function Sidebar() {
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent
+            onClose={onClose}
+            goals={goals}
+            selectedGoal={selectedGoal}
+            setSelectedGoal={setSelectedGoal}
+          />
         </DrawerContent>
       </Drawer>
       <Navbar onOpen={onOpen} />
+      <Box ml={{ base: 0, md: 60 }} p="4">
+        <p>{selectedGoal ? "Selected goal" : "No goal selected"}</p>
+        <p>{goals.find((goal: Goal) => goal.id === selectedGoal)?.name}</p>
+      </Box>
     </Box>
   );
 }
 
 interface SidebarContentProps extends BoxProps {
   onClose: () => void;
+  goals: Array<Goal>;
+  selectedGoal: string;
+  setSelectedGoal: (selectedGoal: string) => void;
 }
 
-const SidebarContent = ({ onClose, ...rest }: SidebarContentProps) => {
-  const [goals, setGoals] = React.useState<Array<Goal>>([]);
-  const [goalId, setGoalId] = React.useState<string>("");
-
-  const globalState = useHookstate(store);
-
-  React.useEffect(() => {
-    if (globalState.get().goals) {
-      setGoals(globalState.get().goals);
-    }
-  }, [globalState]);
-
+const SidebarContent = ({
+  onClose,
+  goals,
+  selectedGoal,
+  setSelectedGoal,
+  ...rest
+}: SidebarContentProps) => {
   return (
     <Box
       transition="3s ease"
@@ -78,9 +99,10 @@ const SidebarContent = ({ onClose, ...rest }: SidebarContentProps) => {
         </Text>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      <RadioGroup onChange={setGoalId} value={goalId}>
+      <RadioGroup onChange={setSelectedGoal} value={selectedGoal}>
         {goals.map((goal: Goal) => (
           <Flex
+            key={goal.id}
             align="center"
             p="4"
             mx="4"
