@@ -10,22 +10,17 @@ import {
   BoxProps,
   Radio,
   RadioGroup,
+  Button,
 } from "@chakra-ui/react";
+import { useHookstate } from "@hookstate/core";
 import React from "react";
+import store from "../store";
 import Navbar from "./Navbar";
 
 interface Goal {
   id: string;
   name: string;
 }
-
-const Goals: Array<Goal> = [
-  { id: "1", name: "Goal 1" },
-  { id: "2", name: "Goal 2" },
-  { id: "3", name: "Goal 3" },
-  { id: "4", name: "Goal 4" },
-  { id: "5", name: "Goal 5" },
-];
 
 export default function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,7 +54,16 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const [goalId, setGoalId] = React.useState("1");
+  const [goals, setGoals] = React.useState([]);
+  const [goalId, setGoalId] = React.useState("");
+
+  const globalState = useHookstate(store);
+
+  React.useEffect(() => {
+    if (globalState.get().goals) {
+      setGoals(globalState.get().goals);
+    }
+  }, [globalState]);
 
   return (
     <Box
@@ -79,7 +83,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       <RadioGroup onChange={setGoalId} value={goalId}>
-        {Goals.map((goal) => (
+        {goals.map((goal: Goal) => (
           <Flex
             align="center"
             p="4"
@@ -92,6 +96,9 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           </Flex>
         ))}
       </RadioGroup>
+      <Flex align="center" p="4" mx="4" borderRadius="lg">
+        <Button colorScheme={"teal"}>Add new goal</Button>
+      </Flex>
     </Box>
   );
 };
