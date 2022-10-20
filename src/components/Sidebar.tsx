@@ -1,45 +1,97 @@
 import {
-  Button,
-  Container,
-  Grid,
-  GridItem,
+  Box,
+  CloseButton,
+  Flex,
+  useColorModeValue,
+  Drawer,
+  DrawerContent,
+  Text,
+  useDisclosure,
+  BoxProps,
   Radio,
   RadioGroup,
-  Stack,
 } from "@chakra-ui/react";
-import * as React from "react";
+import React from "react";
+import Navbar from "./Navbar";
+
+interface Goal {
+  id: string;
+  name: string;
+}
+
+const Goals: Array<Goal> = [
+  { id: "1", name: "Goal 1" },
+  { id: "2", name: "Goal 2" },
+  { id: "3", name: "Goal 3" },
+  { id: "4", name: "Goal 4" },
+  { id: "5", name: "Goal 5" },
+];
 
 export default function Sidebar() {
-  const [goal, setGoal] = React.useState("1");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Grid
-      templateAreas={`"header header"
-                    "nav main"
-                    `}
-      gridTemplateRows={"50px 1fr 30px"}
-      gridTemplateColumns={"150px 1fr"}
-      gap="20"
-    >
-      <GridItem pl="2" area={"header"}>
-        Time tracker
-      </GridItem>
-      <GridItem pl="2" area={"nav"}>
-        Your goals
-        <RadioGroup onChange={setGoal} value={goal}>
-          <Stack>
-            <Radio value="1">Goal 1</Radio>
-            <Radio value="2">Goal 2</Radio>
-            <Radio value="3">Goal 3</Radio>
-          </Stack>
-        </RadioGroup>
-        <Button colorScheme="blue" mt={5}>
-          Add a new goal
-        </Button>
-      </GridItem>
-      <GridItem pl="2" area={"main"}>
-        Main
-      </GridItem>
-    </Grid>
+    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+      <SidebarContent
+        onClose={() => onClose}
+        display={{ base: "none", md: "block" }}
+      />
+      <Drawer
+        autoFocus={false}
+        isOpen={isOpen}
+        placement="left"
+        onClose={onClose}
+        returnFocusOnClose={false}
+        onOverlayClick={onClose}
+        size="full"
+      >
+        <DrawerContent>
+          <SidebarContent onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
+      <Navbar onOpen={onOpen} />
+    </Box>
   );
 }
+
+interface SidebarProps extends BoxProps {
+  onClose: () => void;
+}
+
+const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const [goalId, setGoalId] = React.useState("1");
+
+  return (
+    <Box
+      transition="3s ease"
+      bg={useColorModeValue("white", "gray.900")}
+      borderRight="1px"
+      borderRightColor={useColorModeValue("gray.200", "gray.700")}
+      w={{ base: "full", md: 60 }}
+      pos="fixed"
+      h="full"
+      {...rest}
+    >
+      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+        <Text fontSize="2xl" fontWeight="bold">
+          Your goals
+        </Text>
+        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+      </Flex>
+      <RadioGroup onChange={setGoalId} value={goalId}>
+        {Goals.map((goal) => (
+          <Flex
+            align="center"
+            p="4"
+            mx="4"
+            borderRadius="lg"
+            role="group"
+            cursor="pointer"
+          >
+            <Radio value={goal.id}>{goal.name}</Radio>
+          </Flex>
+        ))}
+      </RadioGroup>
+    </Box>
+  );
+};
