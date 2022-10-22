@@ -23,13 +23,25 @@ import {
 } from "@chakra-ui/react"
 import {CreateCategoryModal} from "./CreateCategoryModal"
 
+function ModalImplementation() {
+  const [goals, setGoals] = React.useState(["Working out", "Studying", "Reading"]);
+
+  return (
+    <Stack>
+      {goals.map((goal, index) => (
+        <Text key={index}>{goal}</Text>
+      ))}
+      <CreateCategoryModal goals = {goals}/>
+    </Stack>
+  )
+}
 
 export const App = () => (
   <ChakraProvider theme={theme}>
     <Box textAlign="center" fontSize="xl">
       <Text>Time Tracker</Text>
       <Text>Built with ChakraUI</Text>
-      <CreateCategoryModal/>
+      <ModalImplementation/>
     </Box>
   </ChakraProvider>
 )

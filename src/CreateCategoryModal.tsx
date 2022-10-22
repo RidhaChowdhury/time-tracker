@@ -20,9 +20,20 @@ import {
   } from "@chakra-ui/react"
 import * as React from "react"
 
-export const CreateCategoryModal = () => {
+interface CategoryModal {
+  goals: string[];
+}
+/*
+void()=> print(onCloseFunction:Function) {
+  console.log("test");
+  onCloseFunction();
+}
+*/
+export const CreateCategoryModal = (props: CategoryModal) => {
     const{isOpen, onOpen, onClose} = useDisclosure()
     
+    
+
     return (
     <Box p={4}>
       <Button onClick={onOpen}>Open Modal</Button>
