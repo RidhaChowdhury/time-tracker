@@ -81,7 +81,7 @@ export const CreateCategoryModal = (props: CategoryModalProps) => {
 
               localStorage.setItem(
                 "goals",
-                JSON.stringify([...globalState.get().goals, newGoal])
+                JSON.stringify([...globalState.goals.get(), newGoal])
               );
 
               globalState.goals.set((previousGoals) => [
