@@ -1,68 +1,101 @@
 import {
-    Box,
-    Text,
-    NumberInput,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    useDisclosure,
-    Button,
-    Input,
-    Stack,
-    NumberInputField,
-    NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper
-  } from "@chakra-ui/react"
-import * as React from "react"
+  Text,
+  NumberInput,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  Input,
+  Stack,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from "@chakra-ui/react";
+import { useHookstate } from "@hookstate/core";
+import React from "react";
+import store from "./store";
+import Goal from "./types/Goal";
 
-interface CategoryModal {
-  goals: string[];
+interface CategoryModalProps {
+  isOpen: boolean;
+  onCloseModal: () => void;
 }
-/*
-void()=> print(onCloseFunction:Function) {
-  console.log("test");
-  onCloseFunction();
-}
-*/
-export const CreateCategoryModal = (props: CategoryModal) => {
-    const{isOpen, onOpen, onClose} = useDisclosure()
-    
-    
 
-    return (
-    <Box p={4}>
-      <Button onClick={onOpen}>Open Modal</Button>
+export const CreateCategoryModal = (props: CategoryModalProps) => {
+  const { isOpen, onCloseModal } = props;
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create a new goal</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack>
-              <Text>What do you want to call this?</Text>
-              <Input placeholder="Category name"/>
-              <Text>Target minutes per week</Text>
-              <NumberInput placeholder="" step={1} defaultValue={60} min={5}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper/>
-                  <NumberDecrementStepper/>
-                </NumberInputStepper>
-              </NumberInput>
-            </Stack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>Save Goal</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+  const [targetMinutes, setTargetMinutes] = React.useState<number>(5);
+  const [goalName, setGoalName] = React.useState("");
 
-    </Box>
-    )
-}
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setGoalName(event.target.value);
+
+  const globalState = useHookstate(store);
+
+  return (
+    <Modal isOpen={isOpen} onClose={onCloseModal}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Create a new goal</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Stack>
+            <Text>What do you want to call this?</Text>
+            <Input
+              placeholder="Category name"
+              value={goalName}
+              onChange={handleChange}
+            />
+            <Text>Target minutes per week</Text>
+            <NumberInput
+              value={targetMinutes}
+              step={1}
+              defaultValue={60}
+              min={5}
+              onChange={(_valueAsString, valueAsNumber) =>
+                setTargetMinutes(valueAsNumber)
+              }
+            >
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </Stack>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            colorScheme="teal"
+            onClick={() => {
+              const newGoal: Goal = {
+                id: Date.now().toString(),
+                name: goalName,
+                targetMinutes: targetMinutes,
+              };
+
+              localStorage.setItem(
+                "goals",
+                JSON.stringify([...globalState.get().goals, newGoal])
+              );
+
+              globalState.set((previousGlobalState) => ({
+                ...previousGlobalState,
+                goals: [...previousGlobalState.goals, newGoal],
+              }));
+
+              onCloseModal();
+            }}
+          >
+            Save Goal
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
