@@ -28,10 +28,8 @@ export default function Sidebar() {
   const globalState = useHookstate(store);
 
   React.useEffect(() => {
-    if (globalState.get().goals) {
-      setGoals(globalState.get().goals);
-    }
-  }, [globalState]);
+    setGoals(globalState.goals.get());
+  }, [globalState.goals]);
 
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
