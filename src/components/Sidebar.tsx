@@ -16,6 +16,7 @@ import { useHookstate } from "@hookstate/core";
 import React from "react";
 import store from "../store";
 import Goal from "../types/Goal";
+import { CreateCategoryModal } from "../CreateCategoryModal";
 import Navbar from "./Navbar";
 
 export default function Sidebar() {
@@ -82,6 +83,8 @@ const SidebarContent = ({
   setSelectedGoal,
   ...rest
 }: SidebarContentProps) => {
+  const { isOpen, onOpen, onClose: onCloseModal } = useDisclosure();
+
   return (
     <Box
       transition="3s ease"
@@ -115,7 +118,10 @@ const SidebarContent = ({
         ))}
       </RadioGroup>
       <Flex align="center" p="4" mx="4" borderRadius="lg">
-        <Button colorScheme={"teal"}>Add new goal</Button>
+        <Button colorScheme={"teal"} onClick={onOpen}>
+          Add new goal
+        </Button>
+        <CreateCategoryModal isOpen={isOpen} onCloseModal={onCloseModal} />
       </Flex>
     </Box>
   );
