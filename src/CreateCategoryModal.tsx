@@ -84,10 +84,10 @@ export const CreateCategoryModal = (props: CategoryModalProps) => {
                 JSON.stringify([...globalState.get().goals, newGoal])
               );
 
-              globalState.set((previousGlobalState) => ({
-                ...previousGlobalState,
-                goals: [...previousGlobalState.goals, newGoal],
-              }));
+              globalState.goals.set((previousGoals) => [
+                ...previousGoals,
+                newGoal,
+              ]);
 
               onCloseModal();
             }}
