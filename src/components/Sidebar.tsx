@@ -16,7 +16,7 @@ import { useHookstate } from "@hookstate/core";
 import React from "react";
 import store from "../store";
 import Goal from "../types/Goal";
-import { CreateCategoryModal } from "../CreateCategoryModal";
+import { CreateCategoryModal } from "./CreateCategoryModal";
 import Navbar from "./Navbar";
 
 export default function Sidebar() {

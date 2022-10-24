@@ -18,8 +18,8 @@ import {
 } from "@chakra-ui/react";
 import { useHookstate } from "@hookstate/core";
 import React from "react";
-import store from "./store";
-import Goal from "./types/Goal";
+import store from "../store";
+import Goal from "../types/Goal";
 
 interface CategoryModalProps {
   isOpen: boolean;
