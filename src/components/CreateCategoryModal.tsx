@@ -15,6 +15,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  useToast
 } from "@chakra-ui/react";
 import { useHookstate } from "@hookstate/core";
 import React from "react";
@@ -36,6 +37,8 @@ export const CreateCategoryModal = (props: CategoryModalProps) => {
     setGoalName(event.target.value);
 
   const globalState = useHookstate(store);
+
+  const toast = useToast()
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseModal}>
@@ -88,6 +91,14 @@ export const CreateCategoryModal = (props: CategoryModalProps) => {
                 ...previousGlobalState,
                 goals: [...previousGlobalState.goals, newGoal],
               }));
+
+              toast({
+                title: 'Goal created.',
+                description: `We've created your goal ${goalName} for you.`,
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+              });
 
               onCloseModal();
             }}
